@@ -27,6 +27,7 @@ export function Footer() {
               { to: "/tools", label: "Tools" },
               { to: "/categories", label: "Categories" },
               { to: "/about", label: "About" },
+              { to: "/contact", label: "Contact" },
               { to: "/privacy", label: "Privacy" },
               { to: "/terms", label: "Terms" },
             ].map((l) => (
