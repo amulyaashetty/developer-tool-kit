@@ -116,10 +116,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 // preference.
 const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem("devtoolkit-theme");if(t==="light"){document.documentElement.classList.remove("dark");document.documentElement.style.colorScheme="light";}}catch(e){}})();`;
 
+// Google Analytics (gtag.js) — loaded first in <head> on every page, per
+// Google Analytics' setup instructions for this data stream.
+const GA_MEASUREMENT_ID = "G-TRXZC1ZP3V";
+const GA_INIT_SCRIPT = `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_MEASUREMENT_ID}');`;
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark" style={{ colorScheme: "dark" }}>
       <head>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} />
+        <script dangerouslySetInnerHTML={{ __html: GA_INIT_SCRIPT }} />
         <HeadContent />
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
