@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,9 +6,18 @@ import { CopyButton, FieldLabel, Panel, StatusNote } from "@/components/tools/pr
 import { describeTimestamp, parseTimestampInput } from "@/lib/timestamp";
 
 export function TimestampConverterTool() {
-  const [tsInput, setTsInput] = useState(String(Math.floor(Date.now() / 1000)));
-  const [dateInput, setDateInput] = useState(() => new Date().toISOString().slice(0, 16));
+  // Start empty so server and client render identically, then fill in the
+  // current time client-side only (after mount) — "now" necessarily differs
+  // between the SSR pass and the client's first render, which would
+  // otherwise cause a hydration mismatch.
+  const [tsInput, setTsInput] = useState("");
+  const [dateInput, setDateInput] = useState("");
   const [unit, setUnit] = useState<"seconds" | "milliseconds">("seconds");
+
+  useEffect(() => {
+    setTsInput(String(Math.floor(Date.now() / 1000)));
+    setDateInput(new Date().toISOString().slice(0, 16));
+  }, []);
 
   const parsed = useMemo(() => parseTimestampInput(tsInput), [tsInput]);
   const breakdown = useMemo(() => (parsed.ok ? describeTimestamp(parsed.ms) : null), [parsed]);
