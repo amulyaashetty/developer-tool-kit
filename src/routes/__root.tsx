@@ -124,10 +124,19 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', '${GA_MEASUREMENT_ID}');`;
 
+// Google AdSense — loaded in <head> on every page, per AdSense's site
+// verification/ad-serving setup instructions for this publisher account.
+const ADSENSE_CLIENT_ID = "ca-pub-5491157547653441";
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark" style={{ colorScheme: "dark" }}>
       <head>
+        <script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
+          crossOrigin="anonymous"
+        />
         <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} />
         <script dangerouslySetInnerHTML={{ __html: GA_INIT_SCRIPT }} />
         <HeadContent />
