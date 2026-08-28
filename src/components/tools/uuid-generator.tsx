@@ -1,11 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClearButton, CopyButton, Panel } from "@/components/tools/primitives";
 import { generateUuids } from "@/lib/uuid";
 
 export function UuidGeneratorTool() {
-  const [uuids, setUuids] = useState<string[]>(() => generateUuids(1));
+  // Start empty so server and client render identically, then generate the
+  // first UUID client-side only (after mount) to avoid a hydration mismatch —
+  // crypto-random output necessarily differs between the SSR pass and the
+  // client's first render.
+  const [uuids, setUuids] = useState<string[]>([]);
+
+  useEffect(() => {
+    setUuids(generateUuids(1));
+  }, []);
 
   return (
     <div className="space-y-4">
