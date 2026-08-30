@@ -19,6 +19,7 @@ const NAV = [
   { to: "/tools", label: "Tools" },
   { to: "/categories", label: "Categories" },
   { to: "/about", label: "About" },
+  { to: "/contact", label: "Contact" },
 ] as const;
 
 export function Header() {
