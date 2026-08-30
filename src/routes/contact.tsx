@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Mail, MessageSquareText } from "lucide-react";
 
-const CONTACT_EMAIL = "amulyaashetty02@gmail.com";
+const CONTACT_EMAIL = "devstoolkitorg@gmail.com";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
