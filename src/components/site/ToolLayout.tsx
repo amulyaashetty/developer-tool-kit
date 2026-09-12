@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, AlertCircle } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -64,13 +64,106 @@ export function ToolLayout({ tool, children }: { tool: ToolMeta; children: React
       <AdPlaceholder />
 
       <section className="prose-none max-w-3xl">
-        <h2 className="font-display text-2xl font-semibold">About the {tool.name}</h2>
+        <h2 className="font-display text-2xl font-semibold">About {tool.name}</h2>
         {tool.about.map((p) => (
           <p key={p.slice(0, 24)} className="mt-4 text-[15px] leading-7 text-muted-foreground">
             {p}
           </p>
         ))}
       </section>
+
+      {tool.howToUse && tool.howToUse.length > 0 && (
+        <section className="mt-12 max-w-3xl">
+          <h2 className="font-display text-2xl font-semibold">How to use {tool.name}</h2>
+          <ol className="mt-4 space-y-3">
+            {tool.howToUse.map((step, i) => (
+              <li key={i} className="flex gap-4 text-[15px] leading-7 text-muted-foreground">
+                <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted font-semibold text-foreground">
+                  {i + 1}
+                </span>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
+      {tool.examples && tool.examples.length > 0 && (
+        <section className="mt-12 max-w-3xl">
+          <h2 className="font-display text-2xl font-semibold">Example</h2>
+          {tool.examples.map((example) => (
+            <div key={example.title} className="mt-6">
+              <h3 className="text-sm font-semibold text-foreground">{example.title}</h3>
+              <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                <div className="rounded-lg border border-border bg-muted/30 p-4">
+                  <p className="text-xs font-medium text-muted-foreground">Input</p>
+                  <pre className="mt-2 overflow-x-auto text-[13px] leading-5 text-foreground">
+                    <code>{example.input}</code>
+                  </pre>
+                </div>
+                <div className="rounded-lg border border-border bg-muted/30 p-4">
+                  <p className="text-xs font-medium text-muted-foreground">Output</p>
+                  <pre className="mt-2 overflow-x-auto text-[13px] leading-5 text-foreground">
+                    <code>{example.output}</code>
+                  </pre>
+                </div>
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
+
+      {tool.useCases && tool.useCases.length > 0 && (
+        <section className="mt-12 max-w-3xl">
+          <h2 className="font-display text-2xl font-semibold">When to use {tool.name}</h2>
+          <ul className="mt-4 space-y-2">
+            {tool.useCases.map((useCase, i) => (
+              <li key={i} className="flex gap-3 text-[15px] leading-7 text-muted-foreground">
+                <span className="mt-1 size-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
+                {useCase}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {tool.commonErrors && tool.commonErrors.length > 0 && (
+        <section className="mt-12 max-w-3xl">
+          <h2 className="font-display text-2xl font-semibold">Common errors & troubleshooting</h2>
+          <div className="mt-4 space-y-4">
+            {tool.commonErrors.map((error, i) => (
+              <div
+                key={i}
+                className="rounded-lg border border-amber-200/30 bg-amber-50/30 p-4 dark:border-amber-500/20 dark:bg-amber-500/10"
+              >
+                <div className="flex gap-3">
+                  <AlertCircle className="size-5 shrink-0 text-amber-600 dark:text-amber-500" aria-hidden />
+                  <div className="flex-1">
+                    <p className="font-medium text-amber-900 dark:text-amber-200">{error.problem}</p>
+                    <p className="mt-2 text-[15px] leading-6 text-amber-800/80 dark:text-amber-300/80">
+                      {error.solution}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {tool.limitations && tool.limitations.length > 0 && (
+        <section className="mt-12 max-w-3xl">
+          <h2 className="font-display text-2xl font-semibold">Limitations & details</h2>
+          <ul className="mt-4 space-y-2">
+            {tool.limitations.map((limitation, i) => (
+              <li key={i} className="flex gap-3 text-[15px] leading-7 text-muted-foreground">
+                <span className="mt-1 size-1.5 shrink-0 rounded-full bg-muted-foreground/40" aria-hidden />
+                {limitation}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="mt-12 max-w-3xl">
         <h2 className="font-display text-2xl font-semibold">Frequently asked questions</h2>
@@ -85,6 +178,25 @@ export function ToolLayout({ tool, children }: { tool: ToolMeta; children: React
           ))}
         </Accordion>
       </section>
+
+      {tool.relatedGuides && tool.relatedGuides.length > 0 && (
+        <section className="mt-12 max-w-3xl">
+          <h2 className="font-display text-2xl font-semibold">Related guides</h2>
+          <ul className="mt-4 space-y-2">
+            {tool.relatedGuides.map((guide) => (
+              <li key={guide.slug} className="flex gap-3 text-[15px] leading-7">
+                <span className="mt-1 size-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
+                <Link
+                  to={`/guides/${guide.slug}`}
+                  className="text-primary hover:underline"
+                >
+                  {guide.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="mt-12">
         <h2 className="font-display text-2xl font-semibold">Related tools</h2>
