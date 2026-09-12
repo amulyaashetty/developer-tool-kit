@@ -36,6 +36,17 @@ export interface Faq {
   a: string;
 }
 
+export interface Example {
+  title: string;
+  input: string;
+  output: string;
+}
+
+export interface CommonError {
+  problem: string;
+  solution: string;
+}
+
 export interface ToolMeta {
   slug: string;
   name: string;
@@ -47,6 +58,12 @@ export interface ToolMeta {
   seoTitle: string;
   seoDescription: string;
   about: string[];
+  howToUse?: string[];
+  examples?: Example[];
+  useCases?: string[];
+  commonErrors?: CommonError[];
+  limitations?: string[];
+  relatedGuides?: Array<{ slug: string; title: string }>;
   faqs: Faq[];
 }
 
@@ -66,6 +83,55 @@ export const TOOLS: ToolMeta[] = [
       "JSON is easy for machines to read but painful for humans when it arrives minified on a single line. This formatter re-indents your JSON so nesting, arrays and object boundaries become obvious at a glance.",
       "Formatting also acts as a syntax check: if the document cannot be parsed you get the exact position of the problem instead of a generic failure. Use Minify when you need the smallest possible payload for an API request or a config value.",
     ],
+    howToUse: [
+      "Paste or paste your JSON into the text area",
+      "If your JSON is valid, it will be formatted and prettified automatically",
+      "If there are syntax errors, the exact position and nature of the error will be highlighted",
+      "Use the Minify toggle to compress the JSON into a single line for smaller payloads",
+      "Copy the formatted result and use it in your application",
+    ],
+    examples: [
+      {
+        title: "Minified API Response",
+        input: '{"user":{"id":123,"name":"John","email":"john@example.com"},"status":"active"}',
+        output:
+          '{\n  "user": {\n    "id": 123,\n    "name": "John",\n    "email": "john@example.com"\n  },\n  "status": "active"\n}',
+      },
+    ],
+    useCases: [
+      "Formatting JSON API responses for readability during debugging",
+      "Validating JSON configuration files before deploying",
+      "Minifying JSON payloads to reduce API request size",
+      "Identifying syntax errors in manually-edited JSON",
+      "Converting minified logs into readable format for analysis",
+    ],
+    commonErrors: [
+      {
+        problem: "SyntaxError: Unexpected token ' in JSON at position 0",
+        solution:
+          "JSON only supports double quotes, not single quotes. Change 'key': 'value' to \"key\": \"value\"",
+      },
+      {
+        problem: "SyntaxError: Unexpected token , in JSON at position 42",
+        solution:
+          "Remove trailing commas. JSON does not allow a comma after the last item in an object or array.",
+      },
+      {
+        problem:
+          "SyntaxError: Unexpected token u in JSON at position 0 (when parsing undefined)",
+        solution:
+          "JSON does not support undefined. Replace undefined with null if you need to represent an empty value.",
+      },
+    ],
+    limitations: [
+      "Maximum input size depends on your browser's memory, but typically handles files up to several MB",
+      "Comments are not part of the JSON spec and will cause validation errors",
+      "Duplicate keys in objects are allowed by JSON spec but often indicate a data error",
+    ],
+    relatedGuides: [
+      { slug: "what-is-json", title: "What is JSON? A Practical Guide" },
+      { slug: "json-syntax-errors", title: "Common JSON Syntax Errors and Fixes" },
+    ],
     faqs: [
       {
         q: "Is my JSON uploaded anywhere?",
@@ -78,6 +144,10 @@ export const TOOLS: ToolMeta[] = [
       {
         q: "How large a document can I format?",
         a: "It depends on your device's memory, but documents of a few megabytes format almost instantly on a modern machine.",
+      },
+      {
+        q: "What's the difference between formatting and minifying?",
+        a: "Formatting adds indentation and line breaks for human readability. Minifying removes all unnecessary whitespace to reduce file size, which is useful for storage or transmission.",
       },
     ],
   },
@@ -96,6 +166,60 @@ export const TOOLS: ToolMeta[] = [
       "A validator answers one question quickly: can this document be parsed? That is usually what you need when an API rejects a payload or a config file refuses to load.",
       "When the document is invalid the reported line and column point at the first character the parser could not accept — the actual mistake is often just before it, such as a missing comma or an unclosed bracket.",
     ],
+    howToUse: [
+      "Paste or type your JSON into the input area",
+      "The validator checks the JSON immediately",
+      "If valid, you'll see a green checkmark and confirmation",
+      "If invalid, you'll see an error message with the exact line and column number",
+      "Check just before the error position for the actual mistake",
+    ],
+    examples: [
+      {
+        title: "Valid JSON",
+        input:
+          '{"name": "Alice", "age": 28, "active": true, "tags": ["admin", "user"]}',
+        output: "✓ Valid JSON",
+      },
+      {
+        title: "Invalid JSON (trailing comma)",
+        input: '{"name": "Alice", "age": 28,}',
+        output: "✗ Invalid: Unexpected token } at position 28",
+      },
+    ],
+    useCases: [
+      "Checking JSON from an API response before processing",
+      "Validating JSON configuration files before deployment",
+      "Finding syntax errors in manually-edited JSON",
+      "Confirming a JSON file is valid before committing",
+      "Debugging JSON parsing errors in applications",
+    ],
+    commonErrors: [
+      {
+        problem: "Unexpected token } at position X",
+        solution:
+          "There's likely a trailing comma before the closing brace or bracket. Remove it.",
+      },
+      {
+        problem: "Unterminated string starting at position X",
+        solution:
+          "A string is missing its closing double quote. Check the line and find the unclosed string.",
+      },
+      {
+        problem: "Unexpected token : at position X",
+        solution:
+          "Keys must be in double quotes. Check that your key is properly quoted.",
+      },
+    ],
+    limitations: [
+      "Validates JSON syntax only, not against a schema",
+      "Does not check if values make semantic sense for your application",
+      "Comments (// or /* */) are not allowed in standard JSON",
+      "Very large files may be slow to validate depending on browser memory",
+    ],
+    relatedGuides: [
+      { slug: "what-is-json", title: "What is JSON? A Practical Guide" },
+      { slug: "json-syntax-errors", title: "Common JSON Syntax Errors and Fixes" },
+    ],
     faqs: [
       {
         q: "Does this validate against a JSON Schema?",
@@ -108,6 +232,10 @@ export const TOOLS: ToolMeta[] = [
       {
         q: "What counts as valid JSON?",
         a: "Any single valid JSON value: an object, array, string, number, boolean or null. A bare top-level value is valid.",
+      },
+      {
+        q: "Why does the error point to the wrong location?",
+        a: "The parser points to where it detected the problem. The actual mistake is often one position before, like a missing comma or unclosed bracket.",
       },
     ],
   },
@@ -360,6 +488,58 @@ export const TOOLS: ToolMeta[] = [
       "A JWT is three Base64URL segments separated by dots: header, payload and signature. The first two are only encoded, not encrypted, so anyone holding the token can read the claims.",
       "This decoder never verifies the signature — doing so requires the signing key, which should never leave your server. Treat the decoded output as informational and never paste production tokens into any online tool, including this one.",
     ],
+    howToUse: [
+      "Paste your JWT token into the input field",
+      "The decoder automatically extracts the three parts: header, payload, and signature",
+      "View the decoded header (algorithm, token type)",
+      "View the payload claims (user ID, roles, expiry time, custom data)",
+      "Check the signature hash to inspect token integrity",
+      "Note: decoding does not verify the signature (server-side only)",
+    ],
+    examples: [
+      {
+        title: "Example JWT",
+        input:
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFsaWNlIiwiaWF0IjoxNjA0MDI3MDAwLCJleHAiOjE2MDQxMTM0MDB9.5mJRyKbhWlE9X1iC3d",
+        output:
+          'Header:\n{\n  "alg": "HS256",\n  "typ": "JWT"\n}\n\nPayload:\n{\n  "sub": "1234567890",\n  "name": "Alice",\n  "iat": 1604027000 (Jan 1, 2021),\n  "exp": 1604113400 (Jan 2, 2021)\n}',
+      },
+    ],
+    useCases: [
+      "Inspecting JWT claims during development and debugging",
+      "Checking token expiry times to diagnose authentication issues",
+      "Verifying that custom claims are included in a token",
+      "Examining token structure in CI/CD logs",
+      "Understanding what data is embedded in a JWT",
+    ],
+    commonErrors: [
+      {
+        problem: "Invalid JWT format",
+        solution:
+          "A JWT must have exactly 3 parts separated by dots. Check that you pasted the complete token including all parts.",
+      },
+      {
+        problem: "Token claims don't match expectations",
+        solution:
+          "The server that issued the token decided what claims to include. If claims are missing, contact the server admin or check the token issuance code.",
+      },
+      {
+        problem:
+          "Expiry time already passed (exp claim shows past date)",
+        solution:
+          "The token has expired. Request a fresh token from the authentication server. The client should have automatically refreshed it.",
+      },
+    ],
+    limitations: [
+      "Only decodes and displays the token structure; does not verify signatures",
+      "Cannot verify the token is legitimate without the secret key",
+      "Shows the algorithm used but cannot detect if it's a weak choice",
+      "Treats all tokens as if they're correctly formatted; malformed tokens may decode incorrectly",
+    ],
+    relatedGuides: [
+      { slug: "jwt-explained", title: "How JWTs Work: Header, Payload and Signature" },
+      { slug: "base64-encoding", title: "What is Base64 Encoding?" },
+    ],
     faqs: [
       {
         q: "Does this verify the signature?",
@@ -372,6 +552,14 @@ export const TOOLS: ToolMeta[] = [
       {
         q: "What do exp, iat and nbf mean?",
         a: "They are Unix timestamps for expiry, issued-at and not-before. The decoder shows them as readable dates.",
+      },
+      {
+        q: "Is decoding a JWT the same as verifying it?",
+        a: "No. Decoding reads what's inside the token. Verification confirms the token hasn't been modified and was signed by a trusted authority. Verification requires the signing key.",
+      },
+      {
+        q: "Can anyone decode my JWT?",
+        a: "Yes, anyone with the token can decode it. That's why JWTs should never contain passwords or sensitive data. The signature proves the token is authentic, but the contents are visible.",
       },
     ],
   },
